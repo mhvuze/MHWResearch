@@ -1,0 +1,71 @@
+//------------------------------------------------
+//--- 010 Editor v8.0.1 Binary Template
+//
+//      File: 
+//   Authors:   Aradi147, Fandirus, hex, MHVuze
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask:   *.col
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef struct {
+    char magic[4]<bgcolor=0x487147>;
+    uint32 unk1<bgcolor=0x0000ff>;        // always 0x60?
+    uint32 unk2<bgcolor=0x0000ff>;
+    uint32 unk3<bgcolor=0x0000ff>;        // always 0x65?
+    uint32 atkCount<bgcolor=0x487147>;
+} Header;
+
+typedef struct {  
+    uint32 moveId<bgcolor=0x487147>;
+    uint32 knockbackType<bgcolor=0x487147>;
+    uint32 knockbackLvl<bgcolor=0x487147>;
+    uint32 unk1<bgcolor=0x0000ff>;
+    float moveDmg<bgcolor=0x487147>;
+    uint32 unk2[2]<bgcolor=0x0000ff>;
+    float unk14<bgcolor=0x0000ff>;
+    uint32 guardReq<bgcolor=0x487147>;
+    uint32 elementId<bgcolor=0x487147>;
+    uint32 unk3<bgcolor=0x0000ff>;
+    float elementDmg<bgcolor=0x487147>;
+    float poison1<bgcolor=0x487147>;
+    float poison2<bgcolor=0x487147>;
+    float paralysis<bgcolor=0x487147>;
+    float sleep<bgcolor=0x487147>;
+    float blast<bgcolor=0x487147>;
+    float stun<bgcolor=0x487147>;
+    float unk4<bgcolor=0x0000ff>;
+    float bleed<bgcolor=0x487147>;
+    float miasma<bgcolor=0x487147>;
+    byte eleResDownDouble<bgcolor=0x487147>;
+    byte eleResDown<bgcolor=0x487147>;
+    byte defDownDouble<bgcolor=0x487147>;
+    byte defDown<bgcolor=0x487147>;
+    uint32 unk5<bgcolor=0x0000ff>;
+    uint32 unk6<bgcolor=0x0000ff>;
+    float unk7[4]<bgcolor=0x0000ff>;
+    uint32 unk11<bgcolor=0x0000ff>;
+    uint32 unk12<bgcolor=0x0000ff>;
+    float dmgCancelUnk<bgcolor=0x0fffff>;         // Adding large value float here cancels the damage
+    uint32 unk13[8]<bgcolor=0x0000ff>;
+} AttackData;
+
+Header header;
+
+// Get attack data info
+local uint64 atkTag = 21203261724832093;
+local uint64 atkOffset = FindFirst(atkTag);
+Printf("Attack count: %Ld\n", header.atkCount);
+Printf("Attack data offset: %Ld\n", atkOffset);
+FSeek(atkOffset);
+
+char atkSectionMagic[8]<bgcolor=0xffff00>;
+uint32 unk0[3]<bgcolor=0x0000ff>;
+local uint i;
+for (i = 0; i < header.atkCount; i++) {
+    AttackData atkData;
+    FSkip(1);       // Seperating byte
+}

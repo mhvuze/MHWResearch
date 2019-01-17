@@ -16,7 +16,7 @@ typedef struct {
     uint32 unk1<bgcolor=0x0000ff>;        // always 0x60?
     uint32 unk2<bgcolor=0x0000ff>;
     uint32 unk3<bgcolor=0x0000ff>;        // always 0x65?
-    uint32 atkCount<bgcolor=0x487147>;
+    uint32 entryCount<bgcolor=0x487147>;
 } Header;
 
 typedef struct {  
@@ -53,19 +53,25 @@ typedef struct {
     uint32 unk13[8]<bgcolor=0x0000ff>;
 } AttackData;
 
+typedef struct {
+    char atkSectionMagic[8]<bgcolor=0xffff00>;
+    uint32 unk0<bgcolor=0x0000ff>;
+    uint32 atkCount<bgcolor=0x487147>;
+    uint32 unk1<bgcolor=0x0000ff>;
+} AttackDataHeader;
+
 Header header;
 
 // Get attack data info
 local uint64 atkTag = 21203261724832093;
 local uint64 atkOffset = FindFirst(atkTag);
-Printf("Attack count: %Ld\n", header.atkCount);
-Printf("Attack data offset: %Ld\n", atkOffset);
 FSeek(atkOffset);
+AttackDataHeader atkHeader;
+Printf("Attack count: %Ld\n", atkHeader.atkCount);
+Printf("Attack data offset: %Ld\n", atkOffset);
 
-char atkSectionMagic[8]<bgcolor=0xffff00>;
-uint32 unk0[3]<bgcolor=0x0000ff>;
 local uint i;
-for (i = 0; i < header.atkCount; i++) {
+for (i = 0; i < atkHeader.atkCount; i++) {
     AttackData atkData;
     FSkip(1);       // Seperating byte
 }

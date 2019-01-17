@@ -60,18 +60,23 @@ typedef struct {
     uint32 unk1<bgcolor=0x0000ff>;
 } AttackDataHeader;
 
+// File header 
 Header header;
+Printf("Entry count: %Ld\n", header.entryCount);
 
-// Get attack data info
+// ATK Section
 local uint64 atkTag = 21203261724832093;
 local uint64 atkOffset = FindFirst(atkTag);
 FSeek(atkOffset);
-AttackDataHeader atkHeader;
-Printf("Attack count: %Ld\n", atkHeader.atkCount);
-Printf("Attack data offset: %Ld\n", atkOffset);
 
-local uint i;
-for (i = 0; i < atkHeader.atkCount; i++) {
-    AttackData atkData;
-    FSkip(1);       // Seperating byte
-}
+typedef struct {
+    AttackDataHeader atkHeader;
+    Printf("Attack count: %Ld\n", atkHeader.atkCount);
+    Printf("Attack data offset: %Ld\n", atkOffset);
+    local uint i;
+    for (i = 0; i < atkHeader.atkCount; i++) {
+        AttackData atkData;
+        FSkip(1);       // Seperating byte
+    }
+} AttackDataSection;
+AttackDataSection atkDataSection;

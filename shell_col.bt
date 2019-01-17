@@ -67,6 +67,7 @@ Printf("Entry count: %Ld\n", header.entryCount);
 // ATK Section
 local uint64 atkTag = 21203261724832093;
 local uint64 atkOffset = FindFirst(atkTag);
+if (atkOffset == -1) return;
 FSeek(atkOffset);
 
 typedef struct {

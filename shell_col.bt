@@ -64,18 +64,57 @@ typedef struct {
 typedef struct {
     AttackDataHeader atkHeader;
     Printf("Attack count: %Ld\n", atkHeader.atkCount);
-    Printf("Attack data offset: %Ld\n", atkOffset);
     local uint i;
     for (i = 0; i < atkHeader.atkCount; i++) AttackData atkData;
 } AttackDataSection;
+
+typedef struct {
+    char ndSectionMagic[8]<bgcolor=0xffff00>;
+    uint32 entryCount<bgcolor=0x487147>;
+    uint32 unk1<bgcolor=0x0000ff>;
+} CLNDSectionHeader;
+
+typedef struct {
+    byte unk1<bgcolor=0x0000ff>;
+    char gmSectionHeader[8]<bgcolor=0xffff00>;
+    byte unk3[6]<bgcolor=0x0000ff>;
+    float areaOfEffect<bgcolor=0x487147>;
+    float unk4[3]<bgcolor=0x0000ff>;
+    uint32 seperator<bgcolor=0x0fffff>;
+    byte unk5[30]<bgcolor=0x0000ff>;
+    uint16 seperator<bgcolor=0x0fffff>;
+    float unk6[4]<bgcolor=0x0000ff>;
+    byte unk7[60]<bgcolor=0x0000ff>;
+} CLGMData;
+
+typedef struct {
+    CLNDSectionHeader clndHeader;
+    Printf("CLND entry count: %Ld\n", clndHeader.entryCount);
+    local uint i; local uint64 entryType;
+    for (i = 0; i < clndHeader.entryCount; i++) {
+        FSkip(1);
+        entryType = ReadUInt64();
+        FSkip(-1);
+        if (entryType == 413613378627) CLGMData clgmData;
+    }
+} CLNDSection;
 
 // File header 
 Header header;
 Printf("Entry count: %Ld\n", header.entryCount);
 
 // ATK Section
-local uint64 atkTag = 21203261724832093;
-local uint64 atkOffset = FindFirst(atkTag);
-if (atkOffset == -1) return;
-FSeek(atkOffset);
-AttackDataSection atkDataSection;
+local uint64 atkOffset = FindFirst(21203261724832093);
+if (atkOffset != -1) {
+    Printf("Attack data offset: %Ld\n", atkOffset);
+    FSeek(atkOffset);
+    AttackDataSection atkDataSection;
+}
+
+// CLND section
+local uint64 ndOffset = FindFirst(1145982019);
+if (ndOffset != -1) {
+    Printf("CLND offset: %Ld\n", ndOffset);
+    FSeek(ndOffset);
+    CLNDSection clndSection;
+}

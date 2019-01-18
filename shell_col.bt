@@ -12,12 +12,19 @@
 //------------------------------------------------
 
 typedef struct {
-    char magic[4]<bgcolor=0x487147>;
+    char magic[4]<bgcolor=0xffff00>;
     uint32 unk1<bgcolor=0x0000ff>;        // always 0x60?
     uint32 unk2<bgcolor=0x0000ff>;
     uint32 unk3<bgcolor=0x0000ff>;        // always 0x65?
     uint32 entryCount<bgcolor=0x487147>;
 } Header;
+
+typedef struct { 
+    char str2[strlen + 1]<bgcolor=0x487147>;
+    uint32 unk1[3]<bgcolor=0x0000ff>;
+    byte unk2[3]<bgcolor=0x0000ff>;
+    uint32 unk3<bgcolor=0x0000ff>;
+} Strings;
 
 typedef struct {  
     uint32 moveId<bgcolor=0x487147>;
@@ -103,12 +110,13 @@ typedef struct {
 Header header;
 Printf("Entry count: %Ld\n", header.entryCount);
 
-// ATK Section
-local uint64 atkOffset = FindFirst(21203261724832093);
-if (atkOffset != -1) {
-    Printf("Attack data offset: %Ld\n", atkOffset);
-    FSeek(atkOffset);
-    AttackDataSection atkDataSection;
+// Strings, no idea how to make this prettier since template vars must not
+// be assigned
+local uint i; local string str; local uint64 strlen;
+for (i = 0; i < header.entryCount; i++) {
+    str = ReadLine(FTell(), -1, false);
+    strlen = Strlen(str);    
+    Strings mvName;
 }
 
 // CLND section
@@ -117,4 +125,12 @@ if (ndOffset != -1) {
     Printf("CLND offset: %Ld\n", ndOffset);
     FSeek(ndOffset);
     CLNDSection clndSection;
+}
+
+// ATK Section
+local uint64 atkOffset = FindFirst(21203261724832093);
+if (atkOffset != -1) {
+    Printf("Attack data offset: %Ld\n", atkOffset);
+    FSeek(atkOffset);
+    AttackDataSection atkDataSection;
 }

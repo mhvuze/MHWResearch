@@ -21,7 +21,9 @@ typedef struct {
 
 typedef struct { 
     char str2[strlen + 1]<bgcolor=0x487147>;
-    uint32 unk1[3]<bgcolor=0x0000ff>;
+    uint32 id<bgcolor=0x487147>;
+    uint32 unk4<bgcolor=0x0000ff>;
+    uint32 unk1<bgcolor=0x0000ff>;
     byte unk2[3]<bgcolor=0x0000ff>;
     uint32 unk3<bgcolor=0x0000ff>;
 } Strings;
@@ -78,20 +80,27 @@ typedef struct {
 typedef struct {
     char ndSectionMagic[8]<bgcolor=0xffff00>;
     uint32 entryCount<bgcolor=0x487147>;
-    uint32 unk1<bgcolor=0x0000ff>;
+    uint32 unk1<bgcolor=0x0000ff>;    
+    byte unk2<bgcolor=0x0000ff>;
 } CLNDSectionHeader;
 
 typedef struct {
-    byte unk1<bgcolor=0x0000ff>;
-    char gmSectionHeader[8]<bgcolor=0xffff00>;
-    byte unk3[6]<bgcolor=0x0000ff>;
     float areaOfEffect<bgcolor=0x487147>;
-    float unk4[3]<bgcolor=0x0000ff>;
-    uint32 seperator<bgcolor=0x0fffff>;
-    byte unk5[30]<bgcolor=0x0000ff>;
-    uint16 seperator<bgcolor=0x0fffff>;
-    float unk6[4]<bgcolor=0x0000ff>;
-    byte unk7[60]<bgcolor=0x0000ff>;
+    byte unk[0x44]<bgcolor=0x0000ff>;
+} CLGMEntry<comment=commentString>;
+
+string commentString(int i) {
+    string s = "test";
+    return s;
+}
+
+typedef struct {
+    char gmSectionHeader[8]<bgcolor=0xffff00>;
+    uint32 gmEntryCount<bgcolor=0x487147>;
+    byte unk3[2]<bgcolor=0x0000ff>;
+    local uint i;
+    for (i = 0; i < gmEntryCount; i++) CLGMEntry gmEntry;
+    byte tail[0x39]<bgcolor=0xff10ff>;
 } CLGMData;
 
 typedef struct {
@@ -99,9 +108,7 @@ typedef struct {
     Printf("CLND entry count: %Ld\n", clndHeader.entryCount);
     local uint i; local uint64 entryType;
     for (i = 0; i < clndHeader.entryCount; i++) {
-        FSkip(1);
         entryType = ReadUInt64();
-        FSkip(-1);
         if (entryType == 413613378627) CLGMData clgmData;
     }
 } CLNDSection;

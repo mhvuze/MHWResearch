@@ -1,0 +1,35 @@
+//------------------------------------------------
+//--- 010 Editor v8.0.1 Binary Template
+//
+//      File: 
+//   Authors:   v00d00y, MHVuze
+//   Version: 
+//   Purpose:   For color table files
+//  Category: 
+// File Mask:   *.uct
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef struct {
+    long unk5;
+    long abgr;
+    float unk0;
+    float unk1;
+    float unk2;
+    float unk3;
+    float unk4;
+} Entry;
+
+typedef struct {
+    long count;
+    local uint i;
+    for (i = 0; i < count; i++) Entry entry;
+} ColorTable;
+
+long magic;
+long unk;
+ColorTable itemColor;       // Item colors
+ColorTable rarityColor;     // Rarity colors
+ColorTable kireColor;       // Sharpness bar colors (Status, not UI)
+ColorTable unkColor;

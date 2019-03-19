@@ -1,0 +1,64 @@
+//------------------------------------------------
+//--- 010 Editor v8.0.1 Binary Template
+//
+//      File: 
+//   Authors:   MHVuze & Dave uRrr
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask:   *.ipr
+//  ID Bytes: 
+//   History: 
+//
+//      March 18th, 2019
+//          -Removed the Byte Padding
+//          -Updated names and datatypes
+//          -Updated the Header and Entry Struct
+//------------------------------------------------
+
+typedef struct {
+    char    FileType[];
+    long    Version<format=hex>;
+    byte    NUL[56]<hidden=true>;                           //Hidden for Readability
+    uint64  EntryOS<name="Entry OffSet">;
+    uint64  entryCount<name="Entry Count">;
+} Header;
+
+typedef struct {
+    uint64  NUL0[3]<hidden=true>;                           //Hidden for Readability
+    uint64  OS_Str_Start<name="String OffSet">;
+    uint64  OS_Str_End1<name="End of String OffSet">;       //stringsOffSet + string[bytes] Only once
+    uint64  OS_Str_Start2<name="String OffSet 2">;          //stringsOffSet2
+    uint64  unk3;
+    uint64  configOffset;                                   //Typically 64 byte offset, more if there is a second string
+    uint64  configCount;
+    uint64  NUL1[2]<hidden=true>;                           //Hidden for Readability
+    //Each Entry Structure is 88 Bytes in Total.
+    //The Asset String has to start on 0 of every new line
+    //If the EntryCount is an Odd number there is a uint64 padding
+    //if (header.entryCount % 2) {uint64  NUL2;};
+} Entry;
+
+typedef struct {
+    float   coordX<name="Position X",bgcolor=0x0fffff>;     // untested
+    float   coordY<name="Position Y",bgcolor=0x0fffff>;     // "
+    float   coordZ<name="Position Z",bgcolor=0x0fffff>;     // "
+    float   scaleX<name="Scale     X",bgcolor=0x00a5ff>;    // "
+    float   scaleY<name="Scale     Y",bgcolor=0x00a5ff>;    // "
+    float   scaleZ<name="Scale     Z",bgcolor=0x00a5ff>;    // "
+    byte    unk[0x5C]<bgcolor=0x0005ff>;
+} Config;
+
+Header header<name="Header",bgcolor=0x0000ff>;
+Entry entry[header.entryCount]<name="Entry",bgcolor=0xffff00>;
+
+local uint i;
+
+for (i = 0; i < header.entryCount; i++) {
+    FSeek(entry[i].OS_Str_Start);
+    struct {
+        byte strings[entry[i].configOffset - entry[i].OS_Str_Start]<bgcolor=0xfff0f0>;
+        FSeek(entry[i].configOffset);
+        Config config[entry[i].configCount];       
+    } Data;
+}
